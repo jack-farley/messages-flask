@@ -18,6 +18,7 @@ Response
       "username": "jf123",
       "name": "Jack",
       "friends": [ <SERIALIZED USER WITHOUT FRIENDS FIELD>, ... ],
+      "friend requests": [ <SERIALIZED REQUESTS>, ... ],
       "messages sent": [ <SERIALIZED MESSAGE>, ... ],
       "messages received": [ <SERIALIZED MESSAGE>, ... ]
     },
@@ -26,6 +27,7 @@ Response
       "username": "mt456",
       "name": "Matt",
       "friends": [ <SERIALIZED USER WITHOUT FRIENDS FIELD>, ... ],
+      "friend requests": [ <SERIALIZED REQUESTS>, ... ],
       "messages sent": [ <SERIALIZED MESSAGE>, ... ],
       "messages received": [ <SERIALIZED MESSAGE>, ... ]
     }
@@ -57,6 +59,7 @@ Response
     "username": <USER INPUT FOR USERNAME>,
     "name": <USER INPUT FOR NAME>,
     "friends": [],
+    "friend requests": [],
     "messages sent": [],
     "messages received": []
   }
@@ -67,7 +70,7 @@ Response
 
 ### Delete a specific user
 
-`DELETE` `/api/users/{id}/`
+`DELETE` `/api/users/{user_id}/`
 
 Response
 
@@ -79,6 +82,7 @@ Response
     "username": <USER INPUT FOR USERNAME>,
     "name": <USER INPUT FOR NAME>,
     "friends": [ <SERIALIZED USER WITHOUT FRIENDS FIELD>, ... ],
+    "friend requests": [ <SERIALIZED REQUESTS>, ... ],
     "messages sent": [ <SERIALIZED MESSAGE>, ... ],
     "messages received": [ <SERIALIZED MESSAGE>, ... ]
   }
@@ -89,7 +93,7 @@ Response
 
 ### Get a specific user
 
-`GET` `/api/users/{id}/`
+`GET` `/api/users/{user_id}/`
 
 Response
 
@@ -101,6 +105,7 @@ Response
     "username": <USER INPUT FOR USERNAME>,
     "name": <USER INPUT FOR NAME>,
     "friends": [ <SERIALIZED USER WITHOUT FRIENDS FIELD>, ... ],
+    "friend requests": [ <SERIALIZED REQUESTS>, ... ],
     "messages sent": [ <SERIALIZED MESSAGE>, ... ],
     "messages received": [ <SERIALIZED MESSAGE>, ... ]
   }
@@ -111,13 +116,12 @@ Response
 
 ### Send a friend request
 
-`POST` `/api/request/`
+`POST` `/api/request/{user_id}/`
 
 Request
 
 ```yaml
 {
-  "sender_id": <USER INPUT>,
   "receiver_id": <USER INPUT>, 
   "message": <USER INPUT>
 }
@@ -129,42 +133,109 @@ Response
 {
   "success": true,
   "data": {
+    "id": <ID>,
+    "timestamp": <NOW>,
     "sender_id": <USER INPUT>,
     "receiver_id": <USER INPUT>, 
-    "message": <USER INPUT>
+    "message": <USER INPUT>,
+    "accepted": false
   }
 }
 ```
 
 ---
 
-### View pending friend requests
-
----
-
 ### Approve a friend request
+
+`POST` `/api/request/{user_id}/{request_id}/`
+
+Request
+
+```yaml
+{
+  "accepted": true or false
+}
+```
+
+Response
+
+```yaml
+{
+   "success": true,
+  "data": {
+    "id": <ID>,
+    "timestamp": <NOW>,  // update timestamp
+    "sender_id": <USER INPUT>,
+    "receiver_id": <USER INPUT>, 
+    "message": <USER INPUT>,
+    "accepted": <USER INPUT FOR ACCEPTED>
+  }
+}
+```
 
 ---
 
 ### Send a message
 
+`POST` `/api/messages/{user_id}/`
+
+Request
+
+```yaml
+{
+  "receiver_id": <USER INPUT>,
+  "message": <USER INPUT>
+}
+```
+
+```yaml
+{
+  "success": true,
+  "data": {
+    "id": <ID>,
+    "timestamp": <NOW>,
+    "sender_id": <USER INPUT>,
+    "receiver_id": <USER INPUT>,
+    "message": <USER INPUT>,
+    "read": false
+  }
+}
+```
+
 ---
 
-### Get all sent messages
+### Get all messages for a specific user
 
----
+`GET` `/api/messages/{user_id}/`
 
-### Get all incoming messages
+Response
 
----
-
-### Get unread messages
-
----
-
-### Get a specific message
+```yaml
+{
+  "success": true,
+  "data": [ <SERIALIZED MESSAGE>, ...]
+}
+```
 
 ---
 
 ### Mark a specific message as read
+
+`POST` `/api/messages/{user_id}/{message_id}/`
+
+Response
+
+```yaml
+{
+  "success": true,
+  "data": {
+    "id": <ID>,
+    "timestamp": <NOW>,
+    "sender_id": <USER INPUT>,
+    "receiver_id": <USER INPUT>,
+    "message": <USER INPUT>,
+    "read": true
+  }
+}
+```
 
