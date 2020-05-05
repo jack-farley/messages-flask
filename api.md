@@ -16,20 +16,12 @@ Response
     {
       "id": 1,
       "username": "jf123",
-      "name": "Jack",
-      "friends": [ <SERIALIZED USER WITHOUT FRIENDS FIELD>, ... ],
-      "friend requests": [ <SERIALIZED REQUESTS>, ... ],
-      "messages sent": [ <SERIALIZED MESSAGE>, ... ],
-      "messages received": [ <SERIALIZED MESSAGE>, ... ]
+      "name": "Jack"
     },
     {
       "id": 2,
       "username": "mt456",
       "name": "Matt",
-      "friends": [ <SERIALIZED USER WITHOUT FRIENDS FIELD>, ... ],
-      "friend requests": [ <SERIALIZED REQUESTS>, ... ],
-      "messages sent": [ <SERIALIZED MESSAGE>, ... ],
-      "messages received": [ <SERIALIZED MESSAGE>, ... ]
     }
   ]
 }
@@ -58,33 +50,6 @@ Response
     "id": <ID>,
     "username": <USER INPUT FOR USERNAME>,
     "name": <USER INPUT FOR NAME>,
-    "friends": [],
-    "friend requests": [],
-    "messages sent": [],
-    "messages received": []
-  }
-}
-```
-
----
-
-### Delete a specific user
-
-`DELETE` `/api/users/{user_id}/`
-
-Response
-
-```yaml
-{
-  "success": true,
-  "data": {
-    "id": <ID>,
-    "username": <USER INPUT FOR USERNAME>,
-    "name": <USER INPUT FOR NAME>,
-    "friends": [ <SERIALIZED USER WITHOUT FRIENDS FIELD>, ... ],
-    "friend requests": [ <SERIALIZED REQUESTS>, ... ],
-    "messages sent": [ <SERIALIZED MESSAGE>, ... ],
-    "messages received": [ <SERIALIZED MESSAGE>, ... ]
   }
 }
 ```
@@ -102,12 +67,25 @@ Response
   "success": true,
   "data": {
     "id": <ID>,
+    "username": <USERNAME>,
+    "name": <NAME>,
+  }
+}
+```
+
+### Delete a specific user
+
+`DELETE` `/api/users/{user_id}/`
+
+Response
+
+```yaml
+{
+  "success": true,
+  "data": {
+    "id": <ID>,
     "username": <USER INPUT FOR USERNAME>,
     "name": <USER INPUT FOR NAME>,
-    "friends": [ <SERIALIZED USER WITHOUT FRIENDS FIELD>, ... ],
-    "friend requests": [ <SERIALIZED REQUESTS>, ... ],
-    "messages sent": [ <SERIALIZED MESSAGE>, ... ],
-    "messages received": [ <SERIALIZED MESSAGE>, ... ]
   }
 }
 ```
