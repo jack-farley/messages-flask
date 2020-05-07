@@ -94,7 +94,7 @@ Response
 
 ### Send a friend request
 
-`POST` `/api/friends/{user_id}/`
+`POST` `/api/users/{user_id}/friends/request/`
 
 Request
 
@@ -124,7 +124,7 @@ Response
 
 ### Approve a friend request
 
-`POST` `/api/friends/request/{user_id}/`
+`PUT` `/api/users/{user_id}/friends/request/`
 
 Request
 
@@ -153,7 +153,7 @@ Response
 
 ### Get all friend requests
 
-`GET` `/api/friends/request/{user_id}/`
+`GET` `/api/users/{user_id}/friends/request/`
 
 
 Response
@@ -183,7 +183,7 @@ Response
 
 ### Get all friends
 
-`GET` `/api/friends/{user_id}/`
+`GET` `/api/users/{user_id}/friends/`
 
 Response
 
@@ -202,6 +202,33 @@ Response
       "name": "Matt",
     }
   ]
+}
+```
+
+---
+
+### Remove a friend
+
+`PUT` `/api/users/{user_id}/friends/`
+
+Request
+
+```yaml
+{
+  "friend_id": <ID>
+}
+```
+
+Response
+
+```yaml
+{
+  "success": true,
+  "data": {
+    "id": <ID>,
+    "username": <USERNAME>,
+    "name": <NAME>
+  }
 }
 ```
 

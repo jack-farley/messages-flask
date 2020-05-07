@@ -1,13 +1,14 @@
 import datetime
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import DateTime
+from sqlalchemy import DateTime, UniqueConstraint
 
 db = SQLAlchemy()
 
 friendships = db.Table('friends', db.Model.metadata,
-                                     db.Column('user_1_id', db.Integer, db.ForeignKey('users.id')),
-                                     db.Column('user_2_id', db.Integer, db.ForeignKey('users.id')))
+                       db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+                       db.Column('friend_id', db.Integer, db.ForeignKey('users.id')),
+                       UniqueConstraint('user_id', 'friend_id', name='unique_friendships'))
 
 
 class User(db.Model):
@@ -16,7 +17,25 @@ class User(db.Model):
     username = db.Column(db.String, nullable=False)
     name = db.Column(db.String, nullable=False)
 
-    friends = db.relationship('User', secondary=friendships, back_populates='friends')
+    friends = db.relationship('User', secondary=friendships,
+                              primaryjoin=id == friendships.c.user_id,
+                              secondaryjoin=id == friendships.c.friend_id)
+
+    def is_friend(self, friend):
+        if friend in self.friends:
+            return True
+        else:
+            return False
+
+    def add_friend(self, friend):
+        if friend not in self.friends:
+            self.friends.append(friend)
+            friend.friends.append(self)
+
+    def remove_friend(self, friend):
+        if friend in self.friends:
+            self.friends.remove(friend)
+            friend.friends.remove(self)
 
     def serialize(self):
         return {
@@ -35,14 +54,12 @@ class FriendRequest(db.Model):
 
     timestamp = db.Column(DateTime, default=datetime.datetime.utcnow)
     message = db.Column(db.String)
-    accepted = db.Column(db.Boolean)
 
     def serialize(self):
         return {
             'id': self.id,
             'sender_id': self.sender_id,
             'receiver_id': self.receiver_id,
-            'timetsamp': self.timestamp,
+            'timetsamp': self.timestamp.__str__(),
             'message': self.message,
-            'accepted': self.accepted
         }
