@@ -84,8 +84,8 @@ Response
   "success": true,
   "data": {
     "id": <ID>,
-    "username": <USER INPUT FOR USERNAME>,
-    "name": <USER INPUT FOR NAME>,
+    "username": <USERNAME>,
+    "name": <NAME>,
   }
 }
 ```
@@ -94,7 +94,7 @@ Response
 
 ### Send a friend request
 
-`POST` `/api/request/{user_id}/`
+`POST` `/api/friends/{user_id}/`
 
 Request
 
@@ -115,8 +115,7 @@ Response
     "timestamp": <NOW>,
     "sender_id": <USER INPUT>,
     "receiver_id": <USER INPUT>, 
-    "message": <USER INPUT>,
-    "accepted": false
+    "message": <USER INPUT>
   }
 }
 ```
@@ -125,12 +124,13 @@ Response
 
 ### Approve a friend request
 
-`POST` `/api/request/{user_id}/{request_id}/`
+`POST` `/api/friends/request/{user_id}/`
 
 Request
 
 ```yaml
 {
+  "request_id": <REQUEST ID>,
   "accepted": true or false
 }
 ```
@@ -142,12 +142,66 @@ Response
    "success": true,
   "data": {
     "id": <ID>,
-    "timestamp": <NOW>,  // update timestamp
+    "timestamp": <TIMESTAMP>
     "sender_id": <USER INPUT>,
     "receiver_id": <USER INPUT>, 
-    "message": <USER INPUT>,
-    "accepted": <USER INPUT FOR ACCEPTED>
+    "message": <USER INPUT>
   }
+}
+```
+---
+
+### Get all friend requests
+
+`GET` `/api/friends/request/{user_id}/`
+
+
+Response
+
+```yaml
+{
+   "success": true,
+  "data": [
+  {
+    "id": <ID>,
+    "timestamp": <TIMESTAMP>
+    "sender_id": <USER INPUT>,
+    "receiver_id": <USER INPUT>, 
+    "message": <USER INPUT>
+  },
+  {
+    "id": <ID>,
+    "timestamp": <TIMESTAMP>
+    "sender_id": <USER INPUT>,
+    "receiver_id": <USER INPUT>, 
+    "message": <USER INPUT>
+  }
+  ]
+}
+```
+---
+
+### Get all friends
+
+`GET` `/api/friends/{user_id}/`
+
+Response
+
+```yaml
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "username": "jf123",
+      "name": "Jack"
+    },
+    {
+      "id": 2,
+      "username": "mt456",
+      "name": "Matt",
+    }
+  ]
 }
 ```
 

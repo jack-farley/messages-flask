@@ -1,0 +1,91 @@
+import json
+from flask import Flask, request
+
+import dao
+from db import db
+
+app = Flask(__name__)
+db_filename = "messages.db"
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///%s" % db_filename
+
+db.init_app(app)
+with app.app_context():
+    db.create_all()
+
+
+def success_response(data, code=200):
+    return json.dumps({'success': True, 'data': data}), code
+
+
+def failure_response(message, code=404):
+    return json.dumps({'sucess': False, 'error': message}), code
+
+
+@app.route('/api/users/', methods=['GET'])
+def get_users():
+    return success_response(dao.get_all_users())
+
+
+@app.route('/api/users/', methods=['POST'])
+def create_user():
+    body = json.loads(request.data)
+    user = dao.create_user(
+        username=body.get('username'),
+        name=body.get('name')
+    )
+    return success_response(user, 201)
+
+
+@app.route('api/users/<int:user_id>/', methods=['GET'])
+def get_user(user_id):
+    user = dao.get_user_by_id(user_id)
+    if user is None:
+        return failure_response("User not found!")
+    return success_response(user)
+
+
+@app.route('/api/users/<int:user_id>/', methods=['DELETE'])
+def delete_user(user_id):
+    user = dao.delete_user_by_id(user_id)
+    if user is None:
+        return failure_response("User not found!")
+    return success_response(user)
+
+
+@app.route('/api/friends/<int:user_id>/', methods=['POST'])
+def send_friend_request(user_id):
+    body = json.loads(request.data)
+    friend_request = dao.create_friend_request(
+        sender_id=user_id,
+        receiver_id=body.get('receiver_id'),
+        message=body.get('message')
+    )
+    return success_response(friend_request, 201)
+
+
+@app.route('/api/friends/request/<int:user_id>/', methods=['POST'])
+def approve_friend_request(user_id):
+    body = json.loads(request.data)
+    friend_request = dao.approve_friend_request(
+        user_id=user_id,
+        request_id=body.get('request_id'),
+        accepted=body.get('accepted')
+    )
+    return success_response(friend_request)
+
+
+@app.route('/api/friends/request/<int:user_id>/', methods=['GET'])
+def get_all_friend_requests(user_id):
+    requests = dao.get_all_friend_requests()
+    if requests is None:
+        return failure_response("User not found.")
+    return success_response(requests)
+
+
+@app.route('/api/friends/<int:user_id>/', methods=['GET'])
+def get_all_friends(user_id):
+    friends = dao.get_all_friends(user_id)
+    if friends is None:
+        return failure_response("User not found.")
+    return success_response(friends)

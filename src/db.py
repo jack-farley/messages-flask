@@ -5,7 +5,7 @@ from sqlalchemy import DateTime
 
 db = SQLAlchemy()
 
-friends_association_table = db.Table('friends', db.Model.metadata,
+friendships = db.Table('friends', db.Model.metadata,
                                      db.Column('user_1_id', db.Integer, db.ForeignKey('users.id')),
                                      db.Column('user_2_id', db.Integer, db.ForeignKey('users.id')))
 
@@ -16,7 +16,7 @@ class User(db.Model):
     username = db.Column(db.String, nullable=False)
     name = db.Column(db.String, nullable=False)
 
-    friends = db.relationship('User', secondary=friends_association_table, back_populates='friends')
+    friends = db.relationship('User', secondary=friendships, back_populates='friends')
 
     def serialize(self):
         return {
