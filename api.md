@@ -94,7 +94,7 @@ Response
 
 ### Send a friend request
 
-`POST` `/api/users/{user_id}/friends/request/`
+`POST` `/api/users/{user_id}/friends/requests/`
 
 Request
 
@@ -124,7 +124,7 @@ Response
 
 ### Approve a friend request
 
-`PUT` `/api/users/{user_id}/friends/request/`
+`PUT` `/api/users/{user_id}/friends/requests/`
 
 Request
 
@@ -153,7 +153,7 @@ Response
 
 ### Get all friend requests
 
-`GET` `/api/users/{user_id}/friends/request/`
+`GET` `/api/users/{user_id}/friends/requests/`
 
 
 Response
@@ -232,55 +232,19 @@ Response
 }
 ```
 
----
+### Create a group
 
-### Send a message
-
-`POST` `/api/messages/{user_id}/`
+`POST` `/api/groups/`
 
 Request
 
 ```yaml
 {
-  "receiver_id": <USER INPUT>,
-  "message": <USER INPUT>
+  "creator_id": <ID>,
+  "name": <NAME (OPTIONAL)>,
+  "other_user_ids": [ <ID>, ... ]
 }
 ```
-
-```yaml
-{
-  "success": true,
-  "data": {
-    "id": <ID>,
-    "timestamp": <NOW>,
-    "sender_id": <USER INPUT>,
-    "receiver_id": <USER INPUT>,
-    "message": <USER INPUT>,
-    "read": false
-  }
-}
-```
-
----
-
-### Get all messages for a specific user
-
-`GET` `/api/messages/{user_id}/`
-
-Response
-
-```yaml
-{
-  "success": true,
-  "data": [ <SERIALIZED MESSAGE>, ...]
-}
-```
-
----
-
-### Mark a specific message as read
-
-`POST` `/api/messages/{user_id}/{message_id}/`
 
 Response
 
@@ -289,12 +253,167 @@ Response
   "success": true,
   "data": {
     "id": <ID>,
-    "timestamp": <NOW>,
-    "sender_id": <USER INPUT>,
-    "receiver_id": <USER INPUT>,
-    "message": <USER INPUT>,
-    "read": true
+    "name": <NAME>,
+    "members": [<SERIALIZED USER (NO FRIENDS, GROUPS)>, ... ],
+    "messages": [<SERIALIZED MESSAGE>, ... ]
   }
 }
 ```
 
+---
+
+### Get a specific group
+
+`GET` `/api/groups/{group_id}/`
+
+Response
+
+```yaml
+{
+  "success": true,
+  "data": {
+    "id": <ID>,
+    "name": <NAME>,
+    "members": [<SERIALIZED USER (NO FRIENDS, GROUPS)>, ... ],
+    "messages": [<SERIALIZED MESSAGE>, ... ]
+  }
+}
+```
+
+### Delete a specific group
+
+`DELETE` `/api/groups/{group_id}/`
+
+Response
+
+```yaml
+{
+  "success": true,
+  "data": {
+    "id": <ID>,
+    "name": <NAME>,
+    "members": [<SERIALIZED USER (NO FRIENDS, GROUPS)>, ... ],
+    "messages": [<SERIALIZED MESSAGE>, ... ]
+  }
+}
+```
+
+--- 
+
+### Add a user to a group
+
+`PUT` `/api/groups/members/`
+
+Request
+
+```yaml
+{
+  "group_id": <ID>,
+  "user_id": <ID>
+}
+```
+
+Response
+
+```yaml
+{
+  "success": true,
+  "data": {
+    "id": <ID>,
+    "name": <NAME>,
+    "members": [<SERIALIZED USER (NO FRIENDS, GROUPS)>, ... ],
+    "messages": [<SERIALIZED MESSAGE>, ... ]
+  }
+}
+```
+
+--- 
+
+### Remove a user from a group
+
+`PUT` `/api/groups/members/remove/`
+
+Request
+
+```yaml
+{
+  "group_id": <ID>,
+  "user_id": <ID>
+}
+```
+
+Response
+
+```yaml
+{
+  "success": true,
+  "data": {
+    "id": <ID>,
+    "name": <NAME>,
+    "members": [<SERIALIZED USER (NO FRIENDS, GROUPS)>, ... ],
+    "messages": [<SERIALIZED MESSAGE>, ... ]
+  }
+}
+```
+
+--- 
+
+### Send a message to a group
+
+`POST` `/api/users/{user_id}/messages/group/`
+
+Request
+
+```yaml
+{
+  "group_id": <ID>,
+  "message": <MESSAGE>
+}
+```
+
+Response
+
+```yaml
+{
+  "success": true
+  "data": {
+    "id": <ID>,
+    "sender_id": <ID>,
+    "group_id": <ID>,
+    "timestamp": <TIMESTAMP>,
+    "message": <MESSAGE>
+  }
+}
+```
+
+---
+
+### Send a message to a user
+
+`POST` `/api/users/{user_id}/messages/`
+
+Request
+
+```yaml
+{
+  "receiver_id": <ID>,
+  "message": <MESSAGE>
+}
+```
+
+Response
+
+```yaml
+{
+  "success": true
+  "data": {
+    "id": <ID>,
+    "sender_id": <ID>,
+    "group_id": <ID>,
+    "timestamp": <TIMESTAMP>,
+    "message": <MESSAGE>
+  }
+}
+```
+
+---

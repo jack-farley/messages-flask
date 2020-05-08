@@ -109,5 +109,78 @@ def remove_friend(user_id):
     return success_response(friend)
 
 
+@app.route('/api/groups/', methods=['POST'])
+def create_group(user_id):
+    body = json.loads(request.data)
+    group = dao.create_group(
+        creator_id=body.get('creator_id'),
+        name=body.get('name'),
+        other_ids=body.get('other_user_ids')
+    )
+    if group is None:
+        return failure_response("Creator not found.")
+    return success_response(group, 201)
+
+
+@app.route('/api/groups/<int:group_id>/', methods=['GET'])
+def get_group_by_id(group_id):
+    group = dao.get_group_by_id(group_id)
+    if group is None:
+        return failure_response("Group not found.")
+    return success_response(group)
+
+
+@app.route('/api/groups/<int:group_id>/', methods=['DELETE'])
+def delete_group_by_id(group_id):
+    group = dao.delete_group_by_id(group_id)
+    if group is None:
+        return failure_response("Group not found.")
+    return success_response(group)
+
+
+@app.route('/api/groups/members/', methods=['PUT'])
+def add_user_to_group():
+    body = json.loads(request.data)
+    group_id = body.get('group_id')
+    user_id = body.get('user_id')
+    group = dao.add_user_to_group(user_id, group_id)
+    if group is None:
+        return failure_response("Unable to add user to group.")
+    return success_response(group)
+
+
+@app.route('/api/groups/members/remove/', methods=['PUT'])
+def remove_user_from_group():
+    body = json.loads(request.data)
+    group_id = body.get('group_id')
+    user_id = body.get('user_id')
+    group = dao.remove_user_from_group(user_id, group_id)
+    if group is None:
+        return failure_response("Unable to remove user from group.")
+    return success_response(group)
+
+
+@app.route('/api/users/<int:user_id>/messages/group/', methods=['POST'])
+def send_message_to_group(user_id):
+    body = json.loads(request.data)
+    group_id = body.get('group_id')
+    text = body.get('message')
+    message = dao.send_message_to_group(user_id, group_id, text)
+    if message is None:
+        return failure_response("Unable to send message.")
+    return success_response(message)
+
+
+@app.route('/api/users/<int:user_id>/messages/', methods=['POST'])
+def send_message_to_user(user_id):
+    body = json.loads(request.data)
+    receiver_id = body.get('receiver_id')
+    text = body.get('message')
+    message = dao.send_message_to_user(user_id, receiver_id, text)
+    if message is None:
+        return failure_response("Unable to send message.")
+    return success_response(message)
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
