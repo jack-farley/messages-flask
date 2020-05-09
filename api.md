@@ -69,6 +69,8 @@ Response
     "id": <ID>,
     "username": <USERNAME>,
     "name": <NAME>,
+    "friends": [<SERIALIZED USER>, ... ],
+    "groups": [<SERIALIZED GROUP>, ... ]
   }
 }
 ```
@@ -112,9 +114,9 @@ Response
   "success": true,
   "data": {
     "id": <ID>,
-    "timestamp": <NOW>,
     "sender_id": <USER INPUT>,
     "receiver_id": <USER INPUT>, 
+    "timestamp": <NOW>,
     "message": <USER INPUT>
   }
 }
@@ -164,9 +166,9 @@ Response
   "data": [
   {
     "id": <ID>,
-    "timestamp": <TIMESTAMP>
     "sender_id": <USER INPUT>,
     "receiver_id": <USER INPUT>, 
+    "timestamp": <TIMESTAMP>,
     "message": <USER INPUT>
   },
   {

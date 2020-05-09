@@ -11,7 +11,7 @@ friendships = db.Table('friends', db.Model.metadata,
                        UniqueConstraint('user_id', 'friend_id', name='unique_friendships'))
 
 user_groups = db.Table('user_groups', db.Model.metadata,
-                       db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+                       db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
                        db.Column('group_id', db.Integer, db.ForeignKey('groups.id')))
 
 
@@ -57,7 +57,7 @@ class User(db.Model):
         }
         if extended:
             serialized['friends'] = [t.serialize() for t in self.friends]
-            serialized['groups'] = [t.serialize() for t in self.groups]
+            serialized['groups'] = [t.serialize(extended=True) for t in self.groups]
         return serialized
 
 
@@ -87,7 +87,7 @@ class Group(db.Model):
     name = db.Column(db.String)
     direct_message = db.Column(db.Boolean, default=False)
 
-    members = db.relationships('User', secondary=user_groups, back_populates='groups')
+    members = db.relationship('User', secondary=user_groups, back_populates='groups')
 
     messages = db.relationship('Message', cascade='delete')
 

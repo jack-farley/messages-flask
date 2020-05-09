@@ -110,12 +110,12 @@ def remove_friend(user_id):
 
 
 @app.route('/api/groups/', methods=['POST'])
-def create_group(user_id):
+def create_group():
     body = json.loads(request.data)
     group = dao.create_group(
         creator_id=body.get('creator_id'),
+        other_ids=body.get('other_user_ids'),
         name=body.get('name'),
-        other_ids=body.get('other_user_ids')
     )
     if group is None:
         return failure_response("Creator not found.")

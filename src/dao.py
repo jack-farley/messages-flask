@@ -124,7 +124,7 @@ def get_all_friends(user_id):
     return [t.serialize() for t in user.friends]
 
 
-def create_group(creator_id, name, other_ids):
+def create_group(creator_id, other_ids, name=None):
     main_user = User.query.filter_by(id=creator_id).first()
     if main_user is None:
         return None
@@ -133,6 +133,7 @@ def create_group(creator_id, name, other_ids):
         members=[],
         messages=[]
     )
+    group.members.append(main_user)
     for user_id in other_ids:
         user = User.query.filter_by(id=user_id).first()
         if user is None:
@@ -155,7 +156,7 @@ def delete_group_by_id(group_id):
     group = Group.query.filter_by(id=group_id).first()
     if group is None:
         return None
-    db.session.remove(group)
+    db.session.delete(group)
     db.session.commit()
     return group.serialize(extended=True)
 
@@ -192,7 +193,7 @@ def send_message_to_group(sender_id, group_id, message):
         message=message
     )
 
-    group.messages.append(new_message)
+    db.session.add(new_message)
     db.session.commit()
     return new_message.serialize()
 
@@ -209,12 +210,13 @@ def send_message_to_user(sender_id, receiver_id, message):
 
     new_group = Group(
         members=[],
-        messages=[]
+        messages=[],
+        direct_message=True
     )
 
     new_group.members.append(sender)
     new_group.members.append(receiver)
     db.session.add(new_group)
-    db.sesssion.commit()
+    db.session.commit()
 
     return send_message_to_group(sender_id, new_group.id, message)
