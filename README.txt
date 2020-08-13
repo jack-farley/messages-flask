@@ -1,3 +1,3 @@
-This is a backend for a messaging application created using Flask.
+A backend for a messaging application built using Flask.
 
 Created by Jack Farley.
